@@ -3,7 +3,10 @@
 const fs = require('fs');
 const path = require('path');
 const paths = require('./paths');
+const dotenv = require('dotenv')
 
+dotenv.config({ path: '../.env' })
+console.log('process.env: ', process.env)
 // Make sure that including paths.js after env.js will read .env variables.
 delete require.cache[require.resolve('./paths')];
 
