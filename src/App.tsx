@@ -14,15 +14,17 @@ function App() {
       <header>
         <img src={TelosCrewLogo} alt="Telos Crew logo" />
       </header>
-      <Router>
-        <div id="routerWrap">
-          <Switch>
-            <Route path="/">
-              <Main />
-            </Route>
-          </Switch>
-        </div>
-      </Router>
+      <div id="routerWrap">
+        <Router>
+          <div id="content">
+            <Switch>
+              <Route path="/">
+                <Main />
+              </Route>
+            </Switch>
+          </div>
+        </Router>
+      </div>
     </div>
   );
 }
