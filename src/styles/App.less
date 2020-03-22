@@ -1,9 +1,20 @@
 .App {
+
   text-align: center;
   display: flex;
   flex: 1;
   min-height: 800px;
-  justify-content: center;
+  justify-content: flex-start;
+  flex-direction: column;
+
+  header {
+    flex-direction: column;
+    text-align: center;
+    width: 100%;
+    img {
+      height: 128px;
+    }
+  }
 
   #routerWrap {
     width: 80%;

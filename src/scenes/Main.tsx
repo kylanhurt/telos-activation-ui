@@ -6,11 +6,9 @@ import {
 export class Main extends React.Component {
   render () {
     return (
-      <Router>
-        <div>
+      <div>
 
-        </div>
-      </Router>
+      </div>
     )
   }
 }
