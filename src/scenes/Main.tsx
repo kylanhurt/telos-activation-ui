@@ -24,11 +24,23 @@ export class Main extends React.Component<MainComponentProps, MainComponentState
     }
   }
 
+  colorizeStatus = (status: string) => {
+    switch (status) {
+      case 'new':
+        return 'orange'
+      case 'expired':
+        return 'red'
+      case 'complete':
+        return 'green'
+      default:
+        return 'black'
+    }
+  }
+
   componentDidMount = async () => {
     const { REACT_APP_API_URL } = process.env
     try {
       const response = await axios.get(`${REACT_APP_API_URL}/invoiceTxs`)
-      console.log(response)
       this.setState({
         invoiceTxs: response.data
       })
@@ -54,18 +66,19 @@ export class Main extends React.Component<MainComponentProps, MainComponentState
             </tr>
           </thead>
           <tbody>
-            {invoiceTxs.map((invoiceTx) => {
+            {Object.values(invoiceTxs).map((invoiceTx) => {
               const nowTime = (new Date()).getTime() / 1000
               const timeAgo = secondsToHms(nowTime - invoiceTx.invoiceTime)
               const accountBlockExplorerLink = sprintf(CONSTANTS.BLOCK_EXPLORER_ACCOUNT_BASE_URL, invoiceTx.requestedAccountName)
+              const statusColor = this.colorizeStatus(invoiceTx.btcPayInfo.status)
               return (
                 <tr key={invoiceTx._id}>
                   <td><a href={accountBlockExplorerLink}><strong>{invoiceTx.requestedAccountName}</strong></a></td>
                   <td>{invoiceTx.cryptoInfo[0].paymentUrls.BIP21}</td>
-                  <td><a href={invoiceTx.url}>link</a></td>
+                  <td><a href={invoiceTx.url} target="_blank" rel="noopener noreferrer">link</a></td>
                   <td>{invoiceTx.cryptoInfo[0].totalDue}</td>
                   <td>$ {invoiceTx.price}</td>
-                  <td>{invoiceTx.status}</td>
+                  <td style={{ color: statusColor }}>{invoiceTx.btcPayInfo.status}</td>
                   <td>{timeAgo} ago</td>
                 </tr>
               )
