@@ -1,5 +1,6 @@
 import React from 'react'
 import { Table } from 'reactstrap'
+import { NavLink } from 'react-router-dom'
 import axios from 'axios'
 import { sprintf } from 'sprintf-js'
 import {
@@ -58,6 +59,8 @@ export class Main extends React.Component<MainComponentProps, MainComponentState
     const { invoiceTxs } = this.state
     return (
       <div>
+        <NavLink to='/new-account' className='btn btn-primary'>New Account</NavLink>
+        <br /><br />
         <Table striped>
           <thead>
             <tr>

@@ -95,3 +95,15 @@ export function secondsToHms (seconds: number) {
 
   return hDisplay + mDisplay + sDisplay
 }
+
+export const debounce = (func, delay) => {
+  let inDebounce
+  console.log('in debounce')
+  return function() {
+    console.log('inner debounce')
+    const context = this
+    const args = arguments
+    clearTimeout(inDebounce)
+    inDebounce = setTimeout(() => func.apply(context, args), delay)
+  }
+}
