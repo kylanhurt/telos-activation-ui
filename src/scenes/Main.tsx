@@ -37,7 +37,7 @@ export class Main extends React.Component<MainComponentProps, MainComponentState
     }
   }
 
-  componentDidMount = async () => {
+  fetchInvoiceData = async () => {
     const { REACT_APP_API_URL } = process.env
     try {
       const response = await axios.get(`${REACT_APP_API_URL}/invoiceTxs`)
@@ -47,6 +47,11 @@ export class Main extends React.Component<MainComponentProps, MainComponentState
     } catch (error) {
       console.warn(error);
     }
+  }
+
+  componentDidMount = async () => {
+    this.fetchInvoiceData()
+    setInterval(this.fetchInvoiceData, 10000)
   }
 
   render () {
@@ -69,8 +74,9 @@ export class Main extends React.Component<MainComponentProps, MainComponentState
             {Object.values(invoiceTxs).map((invoiceTx) => {
               const nowTime = (new Date()).getTime() / 1000
               const timeAgo = secondsToHms(nowTime - invoiceTx.invoiceTime)
-              const accountBlockExplorerLink = sprintf(CONSTANTS.BLOCK_EXPLORER_ACCOUNT_BASE_URL, invoiceTx.requestedAccountName)
+              const accountBlockExplorerLink = sprintf(CONSTANTS.EOS_BLOCK_EXPLORER_ACCOUNT_BASE_URL, invoiceTx.requestedAccountName)
               const statusColor = this.colorizeStatus(invoiceTx.btcPayInfo.status)
+              const isComplete = invoiceTx.btcPayInfo.status === 'complete'
               return (
                 <tr key={invoiceTx._id}>
                   <td><a href={accountBlockExplorerLink}><strong>{invoiceTx.requestedAccountName}</strong></a></td>
@@ -78,7 +84,15 @@ export class Main extends React.Component<MainComponentProps, MainComponentState
                   <td><a href={invoiceTx.url} target="_blank" rel="noopener noreferrer">link</a></td>
                   <td>{invoiceTx.cryptoInfo[0].totalDue}</td>
                   <td>$ {invoiceTx.price}</td>
-                  <td style={{ color: statusColor }}>{invoiceTx.btcPayInfo.status}</td>
+                  <td style={{ color: statusColor }}>
+                    {isComplete ? (
+                      <a href={sprintf(CONSTANTS.BTC_BLOCK_EXPLORER_TRANSACTION_BASE_URL)} target="_blank" rel="noopener noreferrer">
+                        <strong style={{ color: statusColor }}>{invoiceTx.btcPayInfo.status}</strong>
+                      </a>
+                    ) : (
+                      <span>{invoiceTx.btcPayInfo.status}</span>
+                    )}
+                  </td>
                   <td>{timeAgo} ago</td>
                 </tr>
               )
