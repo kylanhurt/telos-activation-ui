@@ -57,6 +57,7 @@ export class Main extends React.Component<MainComponentProps, MainComponentState
 
   render () {
     const { invoiceTxs } = this.state
+    const sortedInvoiceTxs = Object.values(invoiceTxs).sort((b , a) => a.invoiceTime - b.invoiceTime)
     return (
       <div>
         <NavLink to='/new-account' className='btn btn-primary'>New Account</NavLink>
@@ -74,7 +75,7 @@ export class Main extends React.Component<MainComponentProps, MainComponentState
             </tr>
           </thead>
           <tbody>
-            {Object.values(invoiceTxs).map((invoiceTx) => {
+            {sortedInvoiceTxs.map((invoiceTx) => {
               const nowTime = (new Date()).getTime() / 1000
               const timeAgo = secondsToHms(nowTime - invoiceTx.invoiceTime)
               const accountBlockExplorerLink = sprintf(CONSTANTS.EOS_BLOCK_EXPLORER_ACCOUNT_BASE_URL, invoiceTx.requestedAccountName)
