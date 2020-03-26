@@ -1,4 +1,5 @@
 import React from 'react'
+import { withRouter } from 'react-router-dom'
 import {
   Form,
   FormGroup,
@@ -11,7 +12,9 @@ import axios from 'axios'
 import debounce from 'lodash.debounce'
 
 interface NewAccountWizardComponentProps {
-
+  match: any,
+  location: any,
+  history: any
 }
 
 interface NewAccountWizardComponentState {
@@ -57,7 +60,6 @@ export class NewAccountWizardComponent extends React.Component<NewAccountWizardC
     this.setState({
       isProcessing: true
     })
-    console.log('starting search')
     let color
     let message
     try {
@@ -85,11 +87,18 @@ export class NewAccountWizardComponent extends React.Component<NewAccountWizardC
   }
 
   onClickNext = () => {
-
+    const { history } = this.props
+    const { accountName } = this.state
+    history.push('/new-account-info', { accountName })
   }
 
   render () {
     const { feedback, isProcessing } = this.state
+    let isAvailable = false
+    if (feedback && feedback.color === 'green') {
+      isAvailable = true
+    }
+
     return (
       <div>
         <Form className='col-md-4'>
@@ -113,10 +122,11 @@ export class NewAccountWizardComponent extends React.Component<NewAccountWizardC
               <span style={{ color: feedback.color }}>{feedback.message}</span>
             )}
           </div>
-          <br />
-          <Button onClick={this.onClickNext}>Next</Button>
+          <Button color='primary' disabled={!isAvailable} onClick={this.onClickNext}>Next</Button>
         </Form>
       </div>
     )
   }
 }
+
+export const NewAccountWizardComponentWithRouter = withRouter(NewAccountWizardComponent)

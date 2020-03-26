@@ -7,7 +7,8 @@ import {
 } from 'react-router-dom'
 import TelosCrewLogo from './assets/img/telos-crew-logo-trans-bg.png'
 import { Main } from './scenes/Main'
-import { NewAccountWizardComponent } from './scenes/NewAccountWizard'
+import { NewAccountWizardComponentWithRouter } from './scenes/NewAccountWizard'
+import { NewAccountInfoComponentWithRouter } from './scenes/NewAccountInfo'
 
 function App() {
   return (
@@ -23,7 +24,10 @@ function App() {
                 <Main />
               </Route>
               <Route path='/new-account'>
-                <NewAccountWizardComponent />
+                <NewAccountWizardComponentWithRouter />
+              </Route>
+              <Route path='/new-account-info'>
+                <NewAccountInfoComponentWithRouter />
               </Route>
             </Switch>
           </div>
