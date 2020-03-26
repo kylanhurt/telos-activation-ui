@@ -8,7 +8,10 @@ import {
   Form
 } from 'reactstrap'
 import axios from 'axios'
-
+import {
+  AxiosResponse,
+  InvoiceTx
+} from '../types/apiTypes'
 interface NewAccountInfoComponentProps {
   match: any,
   location: any,
@@ -89,8 +92,9 @@ export class NewAccountInfoComponent extends React.Component<NewAccountInfoCompo
   }
 
   onClickNext = async () => {
+    const { history, location } = this.props
     const { REACT_APP_API_URL } = process.env
-    const { accountName } = this.props.location.state
+    const { accountName } = location.state
     const { ownerPublicKey, activePublicKey } = this.state
     let response
     this.setState({
@@ -110,22 +114,36 @@ export class NewAccountInfoComponent extends React.Component<NewAccountInfoCompo
         // route to homepage?
         this.setState({
           activeFeedback: {
+            color: 'green',
+            message: 'Invoice successfully created. Please pay amount within allotted time frame.'
+          }
+        })
+        const invoiceResponse: AxiosResponse = await axios.get(`${REACT_APP_API_URL}/invoiceTxs`)
+        const correctInvoice: any = Object.values(invoiceResponse.data).find((invoice: InvoiceTx) => {
+          return (
+            invoice.requestedAccountName === accountName &&
+            invoice.ownerPublicKey === ownerPublicKey &&
+            invoice.activePublicKey === activePublicKey
+          )
+        })
+        if (!correctInvoice) throw new Error('Unable to find invoice')
+        const invoiceUrl = correctInvoice.url
+        const win = window.open(invoiceUrl, '_blank')
+        win.focus()
+        history.push(`/?id=${correctInvoice.btcPayInfo.id}`)
+      }
+    } catch (e) {
+      if (e && e.response && e.response.data) {
+        const message = e.response.data.reduce((accumulator, currentValue) => {
+          return accumulator + ' ' + currentValue.message
+        }, '')
+        this.setState({
+          formFeedback: {
             color: 'red',
-            message: 'Something'
+            message
           }
         })
       }
-    } catch (e) {
-      console.log('error.response: ', e.response)
-      const message = e.response.data.reduce((accumulator, currentValue) => {
-        return accumulator + ' ' + currentValue.message
-      }, '')
-      this.setState({
-        formFeedback: {
-          color: 'red',
-          message
-        }
-      })
     }
   }
 

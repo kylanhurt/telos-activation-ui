@@ -3,7 +3,8 @@ import './styles/App.scss'
 import {
   BrowserRouter as Router,
   Switch,
-  Route
+  Route,
+  Link
 } from 'react-router-dom'
 import TelosCrewLogo from './assets/img/telos-crew-logo-trans-bg.png'
 import { Main } from './scenes/Main'
@@ -13,11 +14,11 @@ import { NewAccountInfoComponentWithRouter } from './scenes/NewAccountInfo'
 function App() {
   return (
     <div className="App">
-      <header>
-        <img src={TelosCrewLogo} alt="Telos Crew logo" />
-      </header>
-      <div id="routerWrap">
-        <Router>
+      <Router>
+        <header>
+          <Link to="/"><img src={TelosCrewLogo} alt="Telos Crew logo" /></Link>
+        </header>
+        <div id="routerWrap">
           <div id="content">
             <Switch>
               <Route path="/" exact>
@@ -31,8 +32,8 @@ function App() {
               </Route>
             </Switch>
           </div>
-        </Router>
-      </div>
+        </div>
+      </Router>
     </div>
   );
 }

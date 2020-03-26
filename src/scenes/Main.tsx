@@ -32,6 +32,7 @@ export class Main extends React.Component<MainComponentProps, MainComponentState
       case 'expired':
         return 'red'
       case 'complete':
+      case 'confirmed':
         return 'green'
       default:
         return 'black'
