@@ -4,10 +4,23 @@ import './styles/index.scss';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import 'bootstrap/dist/css/bootstrap.min.css'
+import { createStore, applyMiddleware, compose, } from 'redux'
+import { rootReducer } from './redux/reducers'
+import { Provider } from 'react-redux'
+import thunk from 'redux-thunk'
+
+// tslint:disable-next-line
+const composeEnhancers = window['__REDUX_DEVTOOLS_EXTENSION_COMPOSE__'] as typeof compose || compose;
+const store = createStore(
+  rootReducer,
+  composeEnhancers(applyMiddleware(thunk)),
+)
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+     <Provider store={store}>
+       <App />
+     </Provider>
   </React.StrictMode>,
   document.getElementById('root')
 );

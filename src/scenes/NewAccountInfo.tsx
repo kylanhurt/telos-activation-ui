@@ -123,7 +123,8 @@ export class NewAccountInfoComponent extends React.Component<NewAccountInfoCompo
           return (
             invoice.requestedAccountName === accountName &&
             invoice.ownerPublicKey === ownerPublicKey &&
-            invoice.activePublicKey === activePublicKey
+            invoice.activePublicKey === activePublicKey &&
+            invoice.btcPayInfo.status !== 'expired'
           )
         })
         if (!correctInvoice) throw new Error('Unable to find invoice')
@@ -133,7 +134,7 @@ export class NewAccountInfoComponent extends React.Component<NewAccountInfoCompo
         history.push(`/?id=${correctInvoice.btcPayInfo.id}`)
       }
     } catch (e) {
-      if (e && e.response && e.response.data) {
+      if (e && e.response && e.response.data && e.response.data.length > 0 && typeof e.response.data === 'object') {
         const message = e.response.data.reduce((accumulator, currentValue) => {
           return accumulator + ' ' + currentValue.message
         }, '')

@@ -70,7 +70,6 @@ export class Main extends React.Component<MainComponentProps, MainComponentState
           <thead>
             <tr>
               <th>Account Name</th>
-              <th>Payment URI</th>
               <th>Invoice ID</th>
               <th>BTC</th>
               <th>USD</th>
@@ -89,7 +88,6 @@ export class Main extends React.Component<MainComponentProps, MainComponentState
               return (
                 <tr key={invoiceTx._id} style={isChosen ? { borderWidth: 2, borderStyle: 'solid', borderColor: statusColor } : {}}>
                   <td><a href={accountBlockExplorerLink}><strong>{invoiceTx.requestedAccountName}</strong></a></td>
-                  <td>{invoiceTx.cryptoInfo[0].paymentUrls.BIP21}</td>
                   <td><a href={invoiceTx.url} target="_blank" rel="noopener noreferrer">{invoiceTx.btcPayInfo.id}</a></td>
                   <td>{invoiceTx.cryptoInfo[0].totalDue}</td>
                   <td>$ {invoiceTx.price}</td>
