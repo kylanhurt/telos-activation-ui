@@ -7,7 +7,7 @@ import {
   Link
 } from 'react-router-dom'
 import TelosCrewLogo from './assets/img/telos-crew-logo-trans-bg.png'
-import { Main } from './scenes/Main'
+import Main from './scenes/Main'
 import { NewAccountWizardComponentWithRouter } from './scenes/NewAccountWizard'
 import { NewAccountInfoComponentWithRouter } from './scenes/NewAccountInfo'
 

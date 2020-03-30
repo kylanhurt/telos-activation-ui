@@ -1,30 +1,27 @@
 import React from 'react'
+import { connect } from 'react-redux'
 import { Table } from 'reactstrap'
 import { NavLink } from 'react-router-dom'
-import axios from 'axios'
 import { sprintf } from 'sprintf-js'
 import {
   secondsToHms
 }
 from '../utils/utils'
 import { CONSTANTS } from '../constants/index'
+import { fetchInvoiceTxs } from '../redux/actions/invoiceTxActions'
 
 interface MainComponentProps {
-
+  fetchInvoiceTxs: () => void,
+  recentInvoiceTxs: {
+    [key: string]: any
+  }
 }
 
 interface MainComponentState {
-  invoiceTxs: any[]
+  recentInvoiceTxs: any[]
 }
 
-export class Main extends React.Component<MainComponentProps, MainComponentState> {
-  constructor(props: any) {
-    super(props)
-    this.state = {
-      invoiceTxs: []
-    }
-  }
-
+class Main extends React.Component<MainComponentProps, MainComponentState> {
   colorizeStatus = (status: string) => {
     switch (status) {
       case 'new':
@@ -39,26 +36,15 @@ export class Main extends React.Component<MainComponentProps, MainComponentState
     }
   }
 
-  fetchInvoiceData = async () => {
-    const { REACT_APP_API_URL } = process.env
-    try {
-      const response = await axios.get(`${REACT_APP_API_URL}/invoiceTxs`)
-      this.setState({
-        invoiceTxs: response.data
-      })
-    } catch (error) {
-      console.warn(error);
-    }
-  }
-
   componentDidMount = async () => {
-    this.fetchInvoiceData()
-    setInterval(this.fetchInvoiceData, 10000)
+    const { fetchInvoiceTxs } = this.props
+    fetchInvoiceTxs()
+    setInterval(fetchInvoiceTxs, 10000)
   }
 
   render () {
-    const { invoiceTxs } = this.state
-    const sortedInvoiceTxs = Object.values(invoiceTxs).sort((b , a) => a.invoiceTime - b.invoiceTime)
+    const { recentInvoiceTxs } = this.props
+    const sortedInvoiceTxs = Object.values(recentInvoiceTxs).sort((b , a) => a.invoiceTime - b.invoiceTime)
     const queryString = window.location.search
     const urlParams = new URLSearchParams(queryString)
     const invoiceId = urlParams.get('id')
@@ -110,3 +96,17 @@ export class Main extends React.Component<MainComponentProps, MainComponentState
     )
   }
 }
+
+const mapStateToProps = (state: any) => {
+  return {
+    recentInvoiceTxs: state.invoiceTxReducer.recentInvoiceTxs
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    fetchInvoiceTxs: () => dispatch(fetchInvoiceTxs())
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Main)
