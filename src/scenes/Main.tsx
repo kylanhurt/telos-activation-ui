@@ -8,7 +8,6 @@ import {
 }
 from '../utils/utils'
 import { CONSTANTS } from '../constants/index'
-import { fetchInvoiceTxs } from '../redux/actions/invoiceTxActions'
 
 interface MainComponentProps {
   fetchInvoiceTxs: () => void,
@@ -105,7 +104,7 @@ const mapStateToProps = (state: any) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    fetchInvoiceTxs: () => dispatch(fetchInvoiceTxs())
+    fetchInvoiceTxs: () => dispatch({ type: 'FETCH_INVOICE_TXS'})
   }
 }
 
