@@ -47,8 +47,19 @@ export class NewAccountInfoComponent extends React.Component<NewAccountInfoCompo
     }
   }
 
-  onChangeOwnerPublicKey = (e: any) => {
-    const publicKey = e.target.value
+  onChangeOwnerPublicKey = (ownerPublicKey: string) => {
+    const { activePublicKey } = this.state
+    this.updateOwnerPublicKey(ownerPublicKey)
+    this.updateActivePublicKey(activePublicKey)
+  }
+
+  onChangeActivePublicKey = (activePublicKey: string) => {
+    const { ownerPublicKey } = this.state
+    this.updateOwnerPublicKey(ownerPublicKey)
+    this.updateActivePublicKey(activePublicKey)
+  }
+
+  updateOwnerPublicKey = (publicKey: string) => {
     this.setState({ formFeedback: null })
     if (publicKey.length !== 53 || (publicKey.substring(0,3) !== 'EOS')) {
       this.setState({
@@ -69,8 +80,7 @@ export class NewAccountInfoComponent extends React.Component<NewAccountInfoCompo
     })
   }
 
-  onChangeActivePublicKey = (e: any) => {
-    const publicKey = e.target.value
+  updateActivePublicKey = (publicKey: string) => {
     this.setState({ formFeedback: null })
     if (publicKey.length !== 53 || (publicKey.substring(0,3) !== 'EOS')) {
       this.setState({
@@ -107,7 +117,8 @@ export class NewAccountInfoComponent extends React.Component<NewAccountInfoCompo
         currencyCode: 'BTC',
         requestedAccountName: accountName,
         ownerPublicKey,
-        activePublicKey
+        activePublicKey,
+        requestedAccountCurrencyCode: 'TLOS'
       })
       console.log('response is: ', response)
       if (response.status === 200) {
@@ -123,7 +134,8 @@ export class NewAccountInfoComponent extends React.Component<NewAccountInfoCompo
           return (
             invoice.requestedAccountName === accountName &&
             invoice.ownerPublicKey === ownerPublicKey &&
-            invoice.activePublicKey === activePublicKey
+            invoice.activePublicKey === activePublicKey &&
+            invoice.btcPayInfo.status !== 'expired'
           )
         })
         if (!correctInvoice) throw new Error('Unable to find invoice')
@@ -133,7 +145,7 @@ export class NewAccountInfoComponent extends React.Component<NewAccountInfoCompo
         history.push(`/?id=${correctInvoice.btcPayInfo.id}`)
       }
     } catch (e) {
-      if (e && e.response && e.response.data) {
+      if (e && e.response && e.response.data && e.response.data.length > 0 && typeof e.response.data === 'object') {
         const message = e.response.data.reduce((accumulator, currentValue) => {
           return accumulator + ' ' + currentValue.message
         }, '')
@@ -155,13 +167,13 @@ export class NewAccountInfoComponent extends React.Component<NewAccountInfoCompo
     }
 
     return (
-      <div>
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
         <Form className='col-md-4'>
           <FormGroup>
             <Label for="owner-public-key">Owner Public Key</Label>
             <div>
               <Input
-                onChange={this.onChangeOwnerPublicKey}
+                onChange={(e) => this.onChangeOwnerPublicKey(e.target.value)}
                 type="text"
                 name="owner-public-key"
                 id="owner-public-key"
@@ -177,7 +189,7 @@ export class NewAccountInfoComponent extends React.Component<NewAccountInfoCompo
           <Label for="active-public-key">Active Public Key</Label>
             <div>
               <Input
-                onChange={this.onChangeActivePublicKey}
+                onChange={(e) => this.onChangeActivePublicKey(e.target.value)}
                 type="text"
                 name="active-public-key"
                 id="active-public-key"

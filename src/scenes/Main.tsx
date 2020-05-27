@@ -1,7 +1,7 @@
 import React from 'react'
+import { connect } from 'react-redux'
 import { Table } from 'reactstrap'
 import { NavLink } from 'react-router-dom'
-import axios from 'axios'
 import { sprintf } from 'sprintf-js'
 import {
   secondsToHms
@@ -10,21 +10,17 @@ from '../utils/utils'
 import { CONSTANTS } from '../constants/index'
 
 interface MainComponentProps {
-
+  fetchInvoiceTxs: () => void,
+  recentInvoiceTxs: {
+    [key: string]: any
+  }
 }
 
 interface MainComponentState {
-  invoiceTxs: any[]
+  recentInvoiceTxs: any[]
 }
 
-export class Main extends React.Component<MainComponentProps, MainComponentState> {
-  constructor(props: any) {
-    super(props)
-    this.state = {
-      invoiceTxs: []
-    }
-  }
-
+class Main extends React.Component<MainComponentProps, MainComponentState> {
   colorizeStatus = (status: string) => {
     switch (status) {
       case 'new':
@@ -39,26 +35,15 @@ export class Main extends React.Component<MainComponentProps, MainComponentState
     }
   }
 
-  fetchInvoiceData = async () => {
-    const { REACT_APP_API_URL } = process.env
-    try {
-      const response = await axios.get(`${REACT_APP_API_URL}/invoiceTxs`)
-      this.setState({
-        invoiceTxs: response.data
-      })
-    } catch (error) {
-      console.warn(error);
-    }
-  }
-
   componentDidMount = async () => {
-    this.fetchInvoiceData()
-    setInterval(this.fetchInvoiceData, 10000)
+    const { fetchInvoiceTxs } = this.props
+    fetchInvoiceTxs()
+    setInterval(fetchInvoiceTxs, 10000)
   }
 
   render () {
-    const { invoiceTxs } = this.state
-    const sortedInvoiceTxs = Object.values(invoiceTxs).sort((b , a) => a.invoiceTime - b.invoiceTime)
+    const { recentInvoiceTxs } = this.props
+    const sortedInvoiceTxs = Object.values(recentInvoiceTxs).sort((b , a) => a.invoiceTime - b.invoiceTime)
     const queryString = window.location.search
     const urlParams = new URLSearchParams(queryString)
     const invoiceId = urlParams.get('id')
@@ -70,7 +55,6 @@ export class Main extends React.Component<MainComponentProps, MainComponentState
           <thead>
             <tr>
               <th>Account Name</th>
-              <th>Payment URI</th>
               <th>Invoice ID</th>
               <th>BTC</th>
               <th>USD</th>
@@ -87,9 +71,8 @@ export class Main extends React.Component<MainComponentProps, MainComponentState
               const isComplete = invoiceTx.btcPayInfo.status === 'complete'
               const isChosen = invoiceId === invoiceTx.btcPayInfo.id
               return (
-                <tr key={invoiceTx._id} style={isChosen ? { borderWidth: 2, borderStyle: 'solid', borderColor: statusColor } : {}}>
+                <tr key={invoiceTx._id} style={isChosen ? { borderLeft: `4px solid ${statusColor}` } : {}}>
                   <td><a href={accountBlockExplorerLink}><strong>{invoiceTx.requestedAccountName}</strong></a></td>
-                  <td>{invoiceTx.cryptoInfo[0].paymentUrls.BIP21}</td>
                   <td><a href={invoiceTx.url} target="_blank" rel="noopener noreferrer">{invoiceTx.btcPayInfo.id}</a></td>
                   <td>{invoiceTx.cryptoInfo[0].totalDue}</td>
                   <td>$ {invoiceTx.price}</td>
@@ -112,3 +95,17 @@ export class Main extends React.Component<MainComponentProps, MainComponentState
     )
   }
 }
+
+const mapStateToProps = (state: any) => {
+  return {
+    recentInvoiceTxs: state.invoiceTxReducer.recentInvoiceTxs
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    fetchInvoiceTxs: () => dispatch({ type: 'FETCH_INVOICE_TXS'})
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Main)
