@@ -9,7 +9,7 @@ function* fetchInvoiceTxs() {
   const { REACT_APP_API_URL } = process.env
   const invoiceTxs = yield call(() => axios.get(`${REACT_APP_API_URL}/invoiceTxs`))
   yield put({
-    type: 'SET_INVOICE_TXS_SUCCESS',
+    type: 'FETCH_INVOICE_TXS_SUCCESS',
     data: invoiceTxs.data
   })
 }

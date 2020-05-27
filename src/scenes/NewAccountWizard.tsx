@@ -100,10 +100,10 @@ export class NewAccountWizardComponent extends React.Component<NewAccountWizardC
     }
 
     return (
-      <div>
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
         <Form className='col-md-4'>
           <FormGroup>
-            <Label for="account-name">Account Name</Label>
+            <Label for="account-name"><strong>Account Name</strong></Label>
             <div>
               <Input
                 onChange={this.onChangeAccountName}
@@ -121,7 +121,7 @@ export class NewAccountWizardComponent extends React.Component<NewAccountWizardC
             {!!feedback && (
               <span style={{ color: feedback.color }}>{feedback.message}</span>
             )}
-          </div>
+          </div><br />
           <Button color='primary' disabled={!isAvailable} onClick={this.onClickNext}>Next</Button>
         </Form>
       </div>

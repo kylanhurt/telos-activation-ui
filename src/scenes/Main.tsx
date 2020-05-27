@@ -71,7 +71,7 @@ class Main extends React.Component<MainComponentProps, MainComponentState> {
               const isComplete = invoiceTx.btcPayInfo.status === 'complete'
               const isChosen = invoiceId === invoiceTx.btcPayInfo.id
               return (
-                <tr key={invoiceTx._id} style={isChosen ? { borderWidth: 2, borderStyle: 'solid', borderColor: statusColor } : {}}>
+                <tr key={invoiceTx._id} style={isChosen ? { borderLeft: `4px solid ${statusColor}` } : {}}>
                   <td><a href={accountBlockExplorerLink}><strong>{invoiceTx.requestedAccountName}</strong></a></td>
                   <td><a href={invoiceTx.url} target="_blank" rel="noopener noreferrer">{invoiceTx.btcPayInfo.id}</a></td>
                   <td>{invoiceTx.cryptoInfo[0].totalDue}</td>
